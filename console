@@ -1,0 +1,69 @@
+ var publisherId = new ObjectId("5ffb115ec34269f29900e4d0");
+            string studentNumber;
+            string choose;
+            Console.WriteLine("please select the action you want to do: ");
+            Console.WriteLine("1.Show information");
+            Console.WriteLine("2.Record");
+            Console.WriteLine("3.Update");
+            Console.WriteLine("4.Delete");
+            choose = Console.ReadLine();
+            switch (choose)
+            {
+                case "1":
+                    Console.WriteLine("welcome, enter the number of the student whose information you want to view:");
+                    studentNumber = Console.ReadLine();
+                    var students = coll.Find(b => b.StudentNumber == studentNumber).Limit(1).ToListAsync().Result;
+
+                    Console.WriteLine("students");
+                    foreach (var student in students)
+                    {
+                        Console.WriteLine(" Number " + student.StudentNumber);
+                        Console.WriteLine(" Firstname " + student.FirstName);
+                        Console.WriteLine(" Lastname " + student.LastName);
+                        Console.WriteLine(" Email " + student.Email);
+                    }
+                    break;
+                case "2":
+                    Student std = new Student();
+                    Console.WriteLine("Please enter student number: ");
+                    std.StudentNumber = Console.ReadLine();
+                    Console.WriteLine("Student Name ");
+                    std.FirstName = Console.ReadLine();
+                    Console.WriteLine("Student Surname: ");
+                    std.LastName = Console.ReadLine();
+                    Console.WriteLine("Student Email: ");
+                    std.Email = Console.ReadLine();
+
+                    var doc = new BsonDocument {
+                        {"StudentNumber",std.StudentNumber },
+                {"FirstName", std.FirstName},
+                {"LastName", std.LastName},
+                {"Email", std.Email} };
+
+                    stds.InsertOne(doc);
+                    break;
+                case "3":
+                    Console.WriteLine("Enter the student number you want to update :");
+                    string ogrNo = Console.ReadLine();
+                    var filter = Builders<BsonDocument>.Filter.Eq("StudentNumber", ogrNo);
+                    Console.WriteLine("What information would you like to update? ");
+                    string changeColumn = Console.ReadLine();
+                    Console.WriteLine("enter new information:");
+                    string newData = Console.ReadLine();
+                    var update = Builders<BsonDocument>.Update.Set(changeColumn, newData);
+                    stds.UpdateOne(filter, update);
+                    Console.WriteLine("updated.");
+                    break;
+                case "4":
+                    Console.WriteLine("Enter the student number you want to delete: ");
+                    string deleteStudentNo = Console.ReadLine();
+                    var filterDelete = Builders<BsonDocument>.Filter.Eq("StudentNumber", deleteStudentNo);
+                    stds.DeleteOne(filterDelete);
+                    Console.WriteLine("deleted");
+                    break;
+                default:
+                    Console.WriteLine("you made the wrong choice...");
+                    break;
+            }
+        }
+    }
